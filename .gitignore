@@ -1,0 +1,25 @@
+# Dependencies and production builds
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Local environment and operating system files
+.env
+.env.*
+!.env.example
+.DS_Store
+
+# Logs, coverage, and caches
+*.log
+coverage/
+.vite/
+__pycache__/
+*.py[cod]
+
+# Local agent tooling, planning, and review artifacts
+.agent/
+.agents/
+.claude/
+.codex/
+.impeccable/
+docs/superpowers/
