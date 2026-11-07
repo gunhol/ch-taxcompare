@@ -15,19 +15,21 @@ export function incomeTaxValue(
   profile: IncomeProfileDataset,
   bfsId: number,
   income: number,
+  includeFederal = false,
 ): IncomeTaxBreakdown {
   const incomeIndex = profile.incomes.indexOf(income)
   if (incomeIndex < 0) throw new Error(`No official ESTV profile for CHF ${income}`)
   const components = profile.rates[String(bfsId)]?.[incomeIndex]
   if (!components) throw new Error(`No official ESTV 2026 income data for BFS ${bfsId}`)
-  const [cantonTax, communeTax, churchTax] = components
-  const total = cantonTax + communeTax + churchTax
+  const [cantonTax, communeTax, churchTax, federalTax] = components
+  const total = cantonTax + communeTax + churchTax + (includeFederal ? federalTax : 0)
   return {
     value: total,
     total,
     cantonTax,
     communeTax,
     churchTax,
-    effectiveRate: total / income * 100,
+    federalTax,
+    effectiveRate: total * 100 / income,
   }
 }

@@ -1,6 +1,6 @@
 # CH Tax Compare
 
-Compare official 2026 cantonal, communal, and church income tax across all 2,110 Swiss political municipalities on an interactive administrative map.
+Compare official 2026 cantonal, communal, selected church, and optional federal direct income tax across all 2,110 Swiss political municipalities on an interactive administrative map.
 
 CH Tax Compare is a fully static React and TypeScript application. It needs no account, database, backend, tracking service, or runtime tax API.
 
@@ -8,10 +8,11 @@ CH Tax Compare is a fully static React and TypeScript application. It needs no a
 
 - Real 2026 Swiss municipal, cantonal, and lake geometry.
 - Six household models, four church options, and 27 gross-income brackets from CHF 15,000 to CHF 100,000,000.
-- Linked map and rankings with municipality search, selection, and CSV export.
+- Optional federal direct tax for the same official household profile.
+- Linked map and rankings with municipality search, selection, and scope-aware CSV export.
 - Up to four pinned municipalities for side-by-side comparison.
 - Mouse, keyboard, touch, pinch-to-zoom, and bounded pan controls.
-- Shareable URLs that preserve income, household, church, canton, and selected municipality.
+- Shareable URLs that preserve income, household, church, federal selection, canton, and selected municipality.
 - Responsive desktop and mobile layouts.
 
 ## Run locally
@@ -57,7 +58,7 @@ The six models cover single people and married couples, without children or with
 
 The Federal Tax Administration calculates the profiles using official 2026 tariffs, standard deductions, household rules, and local tax multipliers. The app stores those results directly instead of recreating cantonal formulas.
 
-Displayed totals include annual cantonal, communal, and selected church income tax. Federal direct tax and personal taxes are excluded. Individual deductions, wealth tax, corporate taxes, credits, and every personal circumstance are not modeled. Results are comparison estimates, not a personal tax assessment or tax advice.
+Displayed totals include annual cantonal, communal, and selected church income tax. The federal tax toggle adds official federal direct tax results for the same household profile. CSV exports include an `include_federal` scope field, a `federal_tax_chf` column only when enabled, and the selected total in both modes. Personal taxes remain excluded. Individual deductions, wealth tax, corporate taxes, credits, and every personal circumstance are not modeled. Results are comparison estimates, not a personal tax assessment or tax advice.
 
 Three special areas are shown on the map but excluded from tax rankings, pinning, and exports because the ESTV dataset has no municipal records for them.
 
@@ -89,10 +90,10 @@ The preparation script downloads missing or invalid income profiles and validate
 Filters use root query parameters. For example:
 
 ```text
-?income=125000&household=marriedDualWithChildren&church=none&canton=ZG&municipality=1711
+?income=125000&household=marriedDualWithChildren&church=none&federal=1&canton=ZG&municipality=1711
 ```
 
-Default values are omitted. `municipality=0` represents no selected municipality. Invalid values fall back safely, and browser back, forward, and reload preserve the comparison.
+Default values, including excluded federal tax, are omitted. `municipality=0` represents no selected municipality. Invalid values fall back safely, and browser back, forward, and reload preserve the comparison.
 
 ## GitHub Pages deployment
 

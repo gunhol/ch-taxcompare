@@ -23,6 +23,7 @@ export default function App() {
   const [income, setIncome] = useState(initialShare.income)
   const [household, setHousehold] = useState<Household>(initialShare.household)
   const [church, setChurch] = useState<ChurchOption>(initialShare.church)
+  const [includeFederal, setIncludeFederal] = useState(initialShare.includeFederal)
   const [canton, setCanton] = useState(initialShare.canton)
   const [query, setQuery] = useState('')
   const [sort, setSort] = useState('value-asc')
@@ -42,6 +43,7 @@ export default function App() {
       setIncome(state.income)
       setHousehold(state.household)
       setChurch(state.church)
+      setIncludeFederal(state.includeFederal)
       setCanton(state.canton)
       setActiveId(state.municipality)
       setQuery('')
@@ -51,7 +53,7 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    const search = createShareSearch({ income, household, church, canton, municipality: resolvedActiveId })
+    const search = createShareSearch({ income, household, church, includeFederal, canton, municipality: resolvedActiveId })
     if (search === window.location.search) {
       firstUrlSync.current = false
       return
@@ -59,9 +61,9 @@ export default function App() {
     const method = firstUrlSync.current ? 'replaceState' : 'pushState'
     window.history[method](null, '', `${window.location.pathname}${search}${window.location.hash}`)
     firstUrlSync.current = false
-  }, [canton, church, household, income, resolvedActiveId])
+  }, [canton, church, household, includeFederal, income, resolvedActiveId])
 
-  const ranking = useMemo(() => data && profile ? buildRanking(data.municipalities, profile, income) : [], [data, income, profile])
+  const ranking = useMemo(() => data && profile ? buildRanking(data.municipalities, profile, income, includeFederal) : [], [data, includeFederal, income, profile])
   const values = useMemo(() => new Map(ranking.map(item => [item.bfsId, item.value])), [ranking])
   const breaks = useMemo(() => quantileBreaks(ranking), [ranking])
   const filtered = useMemo(() => ranking.filter(item => !canton || item.canton === canton), [ranking, canton])
@@ -71,6 +73,9 @@ export default function App() {
   const activeItem = resolvedActiveId ? rankingById.get(resolvedActiveId) ?? null : null
   const householdLabel = HOUSEHOLDS.find(item => item.id === household)?.label ?? 'Single, no children'
   const pinnedSet = useMemo(() => new Set(pinnedIds), [pinnedIds])
+  const taxScope = includeFederal
+    ? 'Federal tax included · personal tax excluded'
+    : 'Federal and personal taxes excluded'
 
   function navigate(next: ViewName) {
     setView(next)
@@ -116,9 +121,9 @@ export default function App() {
     </header>
 
     {view !== 'method' && <FilterBar
-      income={income} household={household} church={church} canton={canton} query={searchQuery}
+      income={income} household={household} church={church} includeFederal={includeFederal} canton={canton} query={searchQuery}
       cantons={data.cantons} municipalities={data.municipalities} resultCount={filtered.length}
-      onIncome={setIncome} onHousehold={setHousehold} onChurch={setChurch}
+      onIncome={setIncome} onHousehold={setHousehold} onChurch={setChurch} onIncludeFederal={setIncludeFederal}
       onCanton={value => { setCanton(value); setActiveId(null); setQuery('') }}
       onQuery={setQuery} onSelectPlace={feature => selectPlace(feature.properties.bfsId)}
       onClearSearch={() => setActiveId(null)}
@@ -130,15 +135,15 @@ export default function App() {
         <section className="map-panel" aria-labelledby="map-title">
           <div className="map-heading"><div><h1 id="map-title">Income tax by municipality</h1><p>{canton || 'Switzerland'} · {CHF.format(income)} CHF gross · {householdLabel}</p></div><button type="button" className="demo-badge" onClick={() => navigate('method')}>ESTV 2026<Info size={13} /></button></div>
           <SwissMap key={canton || 'all'} geography={data} values={values} breaks={breaks} selectedCanton={canton} activeId={resolvedActiveId} hoveredId={hoveredId} pinnedIds={pinnedSet} onHover={setHoveredId} onSelect={id => selectPlace(id)} />
-          <div className="map-caption"><span>Cantonal, communal and selected church tax · standard deductions included · federal and personal tax excluded</span><b>{canton ? `${filtered.length} municipalities in ${canton}` : '2,110 municipalities + 3 special areas'}</b></div>
+          <div className="map-caption"><span>Cantonal, communal and selected church tax · standard deductions included · {taxScope}</span><b>{canton ? `${filtered.length} municipalities in ${canton}` : '2,110 municipalities + 3 special areas'}</b></div>
         </section>
-        <RankingPanel items={sorted} sort={sort} activeId={resolvedActiveId} hoveredId={hoveredId} activeItem={activeItem} pinnedIds={pinnedSet} onSort={setSort} onSelect={id => selectPlace(id)} onHover={setHoveredId} onTogglePin={togglePin} />
+        <RankingPanel items={sorted} sort={sort} activeId={resolvedActiveId} hoveredId={hoveredId} activeItem={activeItem} includeFederal={includeFederal} pinnedIds={pinnedSet} onSort={setSort} onSelect={id => selectPlace(id)} onHover={setHoveredId} onTogglePin={togglePin} />
       </div>
-      <PinnedComparison items={pinnedItems} onRemove={togglePin} onClear={() => setPinnedIds([])} onSelect={id => selectPlace(id)} />
+      <PinnedComparison items={pinnedItems} includeFederal={includeFederal} onRemove={togglePin} onClear={() => setPinnedIds([])} onSelect={id => selectPlace(id)} />
     </main>}
-    {view === 'rankings' && <main><FullRankings items={sorted} sort={sort} income={income} household={household} church={church} pinnedIds={pinnedSet} onSort={setSort} onTogglePin={togglePin} onShowOnMap={id => selectPlace(id, true)} /></main>}
-    {view === 'method' && <main><MethodView onBack={() => navigate('compare')} /></main>}
+    {view === 'rankings' && <main><FullRankings items={sorted} sort={sort} income={income} household={household} church={church} includeFederal={includeFederal} pinnedIds={pinnedSet} onSort={setSort} onTogglePin={togglePin} onShowOnMap={id => selectPlace(id, true)} /></main>}
+    {view === 'method' && <main><MethodView includeFederal={includeFederal} onBack={() => navigate('compare')} /></main>}
 
-    <footer className="app-footer"><span>Official ESTV 2026 household profiles · standard deductions included · federal and personal tax excluded</span><button type="button" onClick={() => navigate('method')}>ESTV profiles · Swisstopo-derived geometry · BFS names · 2026</button></footer>
+    <footer className="app-footer"><span>Official ESTV 2026 household profiles · standard deductions included · {taxScope}</span><button type="button" onClick={() => navigate('method')}>ESTV profiles · Swisstopo-derived geometry · BFS names · 2026</button></footer>
   </div>
 }

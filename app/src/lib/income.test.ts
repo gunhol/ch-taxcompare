@@ -7,13 +7,23 @@ import type { Household, IncomeProfileDataset } from '../types/geography.ts'
 const profile = JSON.parse(readFileSync(new URL('../../public/data/income-profiles/single-none.json', import.meta.url), 'utf8')) as IncomeProfileDataset
 
 test('uses the official Bister gross-income components at CHF 100,000', () => {
-  const result = incomeTaxValue(profile, 6172, 100000)
-  assert.equal(result.cantonTax, 6301)
-  assert.equal(result.communeTax, 5664)
-  assert.equal(result.churchTax, 0)
-  assert.equal(result.total, 11965)
-  assert.equal(result.value, 11965)
-  assert.equal(result.effectiveRate, 11.965)
+  const local = incomeTaxValue(profile, 6172, 100000)
+  assert.equal(local.cantonTax, 6301)
+  assert.equal(local.communeTax, 5664)
+  assert.equal(local.churchTax, 0)
+  assert.equal(local.federalTax, 1701)
+  assert.equal(local.total, 11965)
+  assert.equal(local.value, 11965)
+  assert.equal(local.effectiveRate, 11.965)
+
+  const federal = incomeTaxValue(profile, 6172, 100000, true)
+  assert.equal(federal.cantonTax, 6301)
+  assert.equal(federal.communeTax, 5664)
+  assert.equal(federal.churchTax, 0)
+  assert.equal(federal.federalTax, 1701)
+  assert.equal(federal.total, 13666)
+  assert.equal(federal.value, 13666)
+  assert.equal(federal.effectiveRate, 13.666)
 })
 
 test('maps all six household models to their official profile filenames', () => {

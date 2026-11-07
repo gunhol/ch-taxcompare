@@ -8,6 +8,7 @@ interface RankingPanelProps {
   activeId: number | null
   hoveredId: number | null
   activeItem: RankedMunicipality | null
+  includeFederal: boolean
   pinnedIds: Set<number>
   onSort: (sort: string) => void
   onSelect: (id: number) => void
@@ -15,7 +16,7 @@ interface RankingPanelProps {
   onTogglePin: (id: number) => void
 }
 
-export default function RankingPanel({ items, sort, activeId, hoveredId, activeItem, pinnedIds, onSort, onSelect, onHover, onTogglePin }: RankingPanelProps) {
+export default function RankingPanel({ items, sort, activeId, hoveredId, activeItem, includeFederal, pinnedIds, onSort, onSelect, onHover, onTogglePin }: RankingPanelProps) {
   return (
     <aside className="ranking-panel" aria-label="Municipality ranking">
       <div className="ranking-heading"><div><h2>Municipality ranking</h2><p>{items.length} places · ESTV 2026</p></div><ArrowDown size={18} aria-hidden="true" /></div>
@@ -36,7 +37,7 @@ export default function RankingPanel({ items, sort, activeId, hoveredId, activeI
         <div className="active-place-top"><span>Selected municipality</span><b>{activeItem.canton}</b></div>
         <h3>{activeItem.name}</h3><p>BFS {activeItem.bfsId} · {activeItem.district}</p>
         <div className="active-place-value"><span>Estimated annual income tax<strong>{CHF.format(activeItem.value)} <small>CHF</small></strong><em>{formatRate(activeItem.effectiveRate)} of gross income</em></span><button type="button" className={pinnedIds.has(activeItem.bfsId) ? 'secondary-button is-pinned' : 'secondary-button'} onClick={() => onTogglePin(activeItem.bfsId)}>{pinnedIds.has(activeItem.bfsId) ? <PinOff size={16} /> : <Pin size={16} />}{pinnedIds.has(activeItem.bfsId) ? 'Remove pin' : 'Pin to compare'}</button></div>
-        <dl className="tax-breakdown"><div><dt>Cantonal</dt><dd>{CHF.format(activeItem.cantonTax)}</dd></div><div><dt>Communal</dt><dd>{CHF.format(activeItem.communeTax)}</dd></div><div><dt>Church</dt><dd>{CHF.format(activeItem.churchTax)}</dd></div></dl>
+        <dl className={includeFederal ? 'tax-breakdown includes-federal' : 'tax-breakdown'}><div><dt>Cantonal</dt><dd>{CHF.format(activeItem.cantonTax)}</dd></div><div><dt>Communal</dt><dd>{CHF.format(activeItem.communeTax)}</dd></div><div><dt>Church</dt><dd>{CHF.format(activeItem.churchTax)}</dd></div>{includeFederal && <div><dt>Federal</dt><dd>{CHF.format(activeItem.federalTax)}</dd></div>}</dl>
       </div> : <div className="active-place is-empty"><h3>Select a place</h3><p>Click a polygon or ranking row. Hovering either side highlights the same real municipality.</p></div>}
     </aside>
   )

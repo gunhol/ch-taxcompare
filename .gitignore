@@ -17,6 +17,7 @@ __pycache__/
 *.py[cod]
 
 # Local agent tooling, planning, and review artifacts
+.worktrees/
 .agent/
 .agents/
 .claude/
