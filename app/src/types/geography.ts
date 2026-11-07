@@ -17,7 +17,7 @@ export interface IncomeProfileDataset {
   household: Household
   church: ChurchOption
   incomes: number[]
-  rates: Record<string, [number, number, number][]>
+  rates: Record<string, [number, number, number, number][]>
 }
 
 export interface MunicipalityProperties {
@@ -60,6 +60,7 @@ export interface IncomeTaxBreakdown {
   cantonTax: number
   communeTax: number
   churchTax: number
+  federalTax: number
   effectiveRate: number
 }
 

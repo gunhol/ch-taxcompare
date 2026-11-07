@@ -27,12 +27,12 @@ export function formatRate(value: number): string {
   return `${RATE.format(value)}%`
 }
 
-export function buildRanking(features: MunicipalityFeature[], profile: IncomeProfileDataset, income: number): RankedMunicipality[] {
+export function buildRanking(features: MunicipalityFeature[], profile: IncomeProfileDataset, income: number, includeFederal = false): RankedMunicipality[] {
   const ranking: RankedMunicipality[] = []
   for (const feature of features) {
     if (feature.properties.special) continue
     if (!profile.rates[String(feature.properties.bfsId)]) continue
-    const calculation = incomeTaxValue(profile, feature.properties.bfsId, income)
+    const calculation = incomeTaxValue(profile, feature.properties.bfsId, income, includeFederal)
     ranking.push({ ...feature.properties, ...calculation, feature })
   }
   return ranking

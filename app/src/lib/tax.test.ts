@@ -8,7 +8,7 @@ const profile: IncomeProfileDataset = {
   household: 'single',
   church: 'none',
   incomes: [100000],
-  rates: { '1': [[1000, 500, 0]] },
+  rates: { '1': [[1000, 500, 0, 200]] },
 }
 const municipality = { properties: { bfsId: 1, name: 'Test', canton: 'ZZ', cantonName: 'Test', cantonNumber: 1, district: 'Test', special: false } } as MunicipalityFeature
 const special = { properties: { ...municipality.properties, bfsId: 2, special: true } } as MunicipalityFeature
@@ -18,6 +18,12 @@ test('ranks official profile totals and excludes special areas', () => {
   assert.equal(ranking.length, 1)
   assert.equal(ranking[0].value, 1500)
   assert.equal(ranking[0].effectiveRate, 1.5)
+
+  const federal = buildRanking([municipality, special], profile, 100000, true)
+  assert.equal(federal.length, 1)
+  assert.equal(federal[0].federalTax, 200)
+  assert.equal(federal[0].value, 1700)
+  assert.equal(federal[0].effectiveRate, 1.7)
 })
 
 test('formats CHF amounts and effective rates for the interface', () => {
