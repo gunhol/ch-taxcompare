@@ -8,6 +8,7 @@ interface FilterBarProps {
   income: number
   household: Household
   church: ChurchOption
+  includeFederal: boolean
   canton: string
   query: string
   cantons: CantonFeature[]
@@ -16,6 +17,7 @@ interface FilterBarProps {
   onIncome: (value: number) => void
   onHousehold: (value: Household) => void
   onChurch: (value: ChurchOption) => void
+  onIncludeFederal: (value: boolean) => void
   onCanton: (value: string) => void
   onQuery: (value: string) => void
   onSelectPlace: (feature: MunicipalityFeature) => void
@@ -65,6 +67,18 @@ export default function FilterBar(props: FilterBarProps) {
       <div className="filter-field canton-field">
         <label htmlFor="canton-filter">Canton</label>
         <div className="select-wrap"><select id="canton-filter" value={props.canton} onChange={event => props.onCanton(event.target.value)}><option value="">All 26 cantons</option>{props.cantons.map(item => <option key={item.properties.abbr} value={item.properties.abbr}>{item.properties.name}</option>)}</select><ChevronDown size={15} aria-hidden="true" /></div>
+      </div>
+      <div className="filter-field federal-field">
+        <label className="federal-toggle" htmlFor="federal-filter">Federal tax</label>
+        <label className="federal-switch">
+          <input
+            id="federal-filter"
+            type="checkbox"
+            checked={props.includeFederal}
+            onChange={event => props.onIncludeFederal(event.target.checked)}
+          />
+          <span>{props.includeFederal ? 'Included in total' : 'Include in total'}</span>
+        </label>
       </div>
       <div className="filter-field search-field" onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setSearchOpen(false) }}>
         <label htmlFor="place-search">Find a municipality or BFS no.</label>
