@@ -14,16 +14,16 @@ Make current, municipality-level tax comparison publicly accessible through a re
 
 ## Core experience
 
-- Select gross income, household model, church option, and canton.
+- Select gross income, household model, church option, optional federal direct tax, and canton.
 - Explore the real municipal map through search, hover, selection, zoom, and pan.
 - Compare rankings and pin up to four municipalities.
-- Export the current ranking as CSV.
+- Export the current ranking as scope-aware CSV.
 - Share the current comparison through URL parameters.
 - Inspect methodology, coverage, limitations, and source links.
 
 ## Tax scope
 
-The app covers annual cantonal, communal, and selected church income tax for 2026. Standard deductions are included in the official ESTV profiles. Federal direct tax and personal taxes are excluded.
+The app covers annual cantonal, communal, and selected church income tax for 2026, with optional federal direct tax. Standard deductions are included in the official ESTV profiles. The federal tax toggle adds official federal results for the same household profile. Personal taxes remain excluded.
 
 Six household models cover single people and married couples, without children or with two children. Married models support one earner or equal 50/50 earnings. Four church options are available.
 

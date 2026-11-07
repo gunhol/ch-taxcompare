@@ -9,7 +9,7 @@ These instructions apply to the entire repository. The application lives in `app
 - Keep the app fully static. Do not add a backend, account system, runtime tax API, analytics, or tracking.
 - Use only real administrative geography. Do not replace the Swiss map with abstract shapes.
 - Never invent, estimate, or manually patch tax values. Tax figures must come from the documented official sources in `README.md`.
-- Keep the current scope: 2026 cantonal, communal, and selected church income tax. Federal and personal taxes remain excluded unless the product scope is deliberately changed and labels are updated everywhere.
+- Keep the current scope: 2026 cantonal, communal, and selected church income tax, with optional federal direct tax controlled by the federal toggle. Personal taxes remain excluded unless the product scope is deliberately changed and labels are updated everywhere.
 - Preserve source attribution, tax year, household scope, and calculation limitations in the interface and documentation.
 - Treat results as comparison estimates, never as tax advice or a personal assessment.
 
@@ -38,6 +38,7 @@ When bundled tax data changes, run `python scripts/verify_income_profiles.py`. I
 - `src/lib/urlState.ts` parses and serializes the shareable comparison state. Defaults are omitted from URLs; `municipality=0` means no selection.
 - `src/hooks/` loads static geography and income-profile JSON with loading and error states.
 - `src/lib/income.ts` and `src/lib/tax.ts` contain bracket and tax calculations. Add or update unit tests for changes here.
+- `src/lib/csv.ts` generates scope-aware ranking exports. Keep federal components, scope metadata, and filenames aligned with the selected mode.
 - `src/components/SwissMap.tsx` renders TopoJSON and owns map interaction. Keep zoom bounded and distinguish click selection from drag or pinch gestures.
 - `src/components/MethodView.tsx` is the user-facing methodology and source view. Keep it consistent with the root README and dataset metadata.
 - `public/data/` contains committed runtime assets. Do not manually edit generated profile or geography files.

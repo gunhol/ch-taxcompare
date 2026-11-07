@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ChevronLeft, ChevronRight, Download, Map, Pin, PinOff } from 'lucide-react'
+import { incomeRankingCsv } from '../lib/csv'
 import { CHF, formatRate, NUMBER } from '../lib/tax'
 import type { ChurchOption, Household, RankedMunicipality } from '../types/geography'
 
@@ -25,15 +26,11 @@ export default function FullRankings({ items, sort, income, household, church, i
   const visible = items.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
 
   function exportCsv() {
-    const escape = (value: string) => `"${value.replaceAll('"', '""')}"`
-    const lines = [
-      'bfs_id,municipality,canton,district,tax_year,gross_income_chf,household,church_option,cantonal_tax_chf,communal_tax_chf,church_tax_chf,total_income_tax_chf,effective_rate_percent',
-      ...items.map(item => [item.bfsId, escape(item.name), item.canton, escape(item.district), 2026, income, household, church, item.cantonTax.toFixed(2), item.communeTax.toFixed(2), item.churchTax.toFixed(2), item.total.toFixed(2), item.effectiveRate.toFixed(6)].join(',')),
-    ]
-    const url = URL.createObjectURL(new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' }))
+    const csv = incomeRankingCsv(items, { income, household, church, includeFederal })
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }))
     const anchor = document.createElement('a')
     anchor.href = url
-    anchor.download = `ch-taxcompare-estv-2026-income-${income}-${household}-${church}.csv`
+    anchor.download = `ch-taxcompare-estv-2026-income-${income}-${household}-${church}${includeFederal ? '-federal' : ''}.csv`
     anchor.click()
     URL.revokeObjectURL(url)
   }

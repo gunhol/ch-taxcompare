@@ -142,7 +142,7 @@ export default function App() {
       <PinnedComparison items={pinnedItems} includeFederal={includeFederal} onRemove={togglePin} onClear={() => setPinnedIds([])} onSelect={id => selectPlace(id)} />
     </main>}
     {view === 'rankings' && <main><FullRankings items={sorted} sort={sort} income={income} household={household} church={church} includeFederal={includeFederal} pinnedIds={pinnedSet} onSort={setSort} onTogglePin={togglePin} onShowOnMap={id => selectPlace(id, true)} /></main>}
-    {view === 'method' && <main><MethodView onBack={() => navigate('compare')} /></main>}
+    {view === 'method' && <main><MethodView includeFederal={includeFederal} onBack={() => navigate('compare')} /></main>}
 
     <footer className="app-footer"><span>Official ESTV 2026 household profiles · standard deductions included · {taxScope}</span><button type="button" onClick={() => navigate('method')}>ESTV profiles · Swisstopo-derived geometry · BFS names · 2026</button></footer>
   </div>
