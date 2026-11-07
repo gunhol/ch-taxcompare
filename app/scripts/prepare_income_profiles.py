@@ -44,7 +44,7 @@ INCOMES = [
     200000, 250000, 300000, 400000, 500000, 750000, 1000000,
     5000000, 10000000, 50000000, 100000000,
 ]
-COMPONENTS = ("cantonalTax", "municipalityTax", "churchTax")
+COMPONENTS = ("cantonalTax", "municipalityTax", "churchTax", "federalTax")
 
 
 def political_bfs_ids() -> set[int]:
@@ -146,7 +146,7 @@ def validate_dataset(
         if not isinstance(series, list) or len(series) != len(INCOMES):
             raise ValueError(f"Profile BFS {bfs_id} has invalid income coverage")
         for values in series:
-            if not isinstance(values, list) or len(values) != 3:
+            if not isinstance(values, list) or len(values) != 4:
                 raise ValueError(f"Profile BFS {bfs_id} has invalid components")
             if any(
                 isinstance(value, bool)
@@ -257,8 +257,8 @@ def update_metadata() -> None:
         "incomeProfileHouseholds": list(MODELS),
         "incomeProfileChurches": list(CHURCHES),
         "incomeProfileIncomes": INCOMES,
-        "incomeProfileComponents": ["cantonal", "communal", "church"],
-        "incomeProfileExcludes": ["federal", "personal"],
+        "incomeProfileComponents": ["cantonal", "communal", "church", "federal"],
+        "incomeProfileExcludes": ["personal"],
     })
     for obsolete_key in (
         "incomeScaleYear", "incomeScaleSource", "incomeScaleData",
@@ -271,6 +271,22 @@ def update_metadata() -> None:
 
 
 def self_test() -> None:
+    invalid_federal = {
+        "data": [{
+            "bfsId": 1,
+            "income": 100000,
+            "cantonalTax": [100],
+            "municipalityTax": [50],
+            "churchTax": [0],
+        }]
+    }
+    try:
+        parse_payload(invalid_federal, "single", "none", {1})
+    except ValueError as error:
+        assert "federalTax" in str(error), error
+    else:
+        raise AssertionError("A missing federalTax record must be rejected")
+
     payload = {
         "data": [{
             "bfsId": 1,
@@ -278,6 +294,7 @@ def self_test() -> None:
             "cantonalTax": [100],
             "municipalityTax": [50],
             "churchTax": [0],
+            "federalTax": [25],
         }]
     }
     try:
