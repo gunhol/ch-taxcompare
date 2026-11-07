@@ -182,10 +182,10 @@ Income pairs a large numeric field with a teal range control. Household, church,
 The navy shell contains the brand, three task destinations, and a persistent ESTV income-tax status. The current destination receives a 3px amber underline. On phones the brand and status share the first row and navigation spans the next.
 
 ### Map and Ranking
-The map uses five data colors, navy canton outlines, lake cutouts, city labels, zoom controls, and pinned markers. Hovering a ranking row outlines the same polygon; selecting either updates the selected-place panel and its cantonal, communal, and church breakdown. Special areas remain visible but cannot be ranked or pinned.
+The map uses five data colors, navy canton outlines, lake cutouts, city labels, zoom controls, and pinned markers. Hovering a ranking row outlines the same polygon; selecting either updates the selected-place panel and its cantonal, communal, and church breakdown, with a Federal row added when federal tax is included. Special areas remain visible but cannot be ranked or pinned.
 
 ### Pinned Comparison
-Up to four municipalities share a ruled comparison grid. Each item exposes its BFS identity, estimated CHF tax, selection action, and removal action. A tonal summary states the pairwise difference and repeats the federal-tax exclusion.
+Up to four municipalities share a ruled comparison grid. Each item exposes its BFS identity, estimated CHF tax, selection action, and removal action. A tonal summary states the pairwise difference and whether federal tax is included or excluded; personal taxes remain excluded.
 
 ### Method and Provenance
 The method view pairs readable explanatory prose with a compact source panel. Geometry, commune names, ESTV scales, multipliers, calculation limits, and local hosting remain directly reachable.

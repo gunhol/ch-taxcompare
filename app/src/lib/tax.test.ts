@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { buildRanking, CHF, formatRate } from './tax.ts'
+import { buildRanking, CHF, formatRate, sortRanking } from './tax.ts'
 import type { IncomeProfileDataset, MunicipalityFeature } from '../types/geography.ts'
 
 const profile: IncomeProfileDataset = {
@@ -24,6 +24,23 @@ test('ranks official profile totals and excludes special areas', () => {
   assert.equal(federal[0].federalTax, 200)
   assert.equal(federal[0].value, 1700)
   assert.equal(federal[0].effectiveRate, 1.7)
+})
+
+test('federal inclusion changes the ascending ranking order', () => {
+  const orderProfile: IncomeProfileDataset = {
+    ...profile,
+    rates: { '1': [[1000, 0, 0, 400]], '2': [[1100, 0, 0, 0]] },
+  }
+  const secondMunicipality = {
+    properties: { ...municipality.properties, bfsId: 2, name: 'Test 2' },
+  } as MunicipalityFeature
+  const municipalities = [municipality, secondMunicipality]
+
+  const local = sortRanking(buildRanking(municipalities, orderProfile, 100000), 'value-asc')
+  assert.deepEqual(local.map(item => item.bfsId), [1, 2])
+
+  const federal = sortRanking(buildRanking(municipalities, orderProfile, 100000, true), 'value-asc')
+  assert.deepEqual(federal.map(item => item.bfsId), [2, 1])
 })
 
 test('formats CHF amounts and effective rates for the interface', () => {
