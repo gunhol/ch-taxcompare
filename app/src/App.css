@@ -64,7 +64,7 @@
 .demo-badge { display: flex; align-items: center; gap: 7px; min-height: 32px; padding: 6px 9px; border: 0; border-radius: 4px; color: var(--primitive-navy); background: var(--state-selection); font-family: var(--font-data); font-size: 9px; font-weight: 600; white-space: nowrap; }
 .demo-badge:hover { background: oklch(87% 0.14 86); }
 .map-visual { position: relative; flex: 1; min-height: 450px; }
-.swiss-map { display: block; width: 100%; height: 100%; min-height: 450px; overflow: hidden; touch-action: none; }
+.swiss-map { position: absolute; inset: 0; display: block; width: 100%; height: 100%; min-height: 450px; overflow: hidden; touch-action: none; }
 .municipality-shape { stroke: oklch(38% 0.045 225 / .42); stroke-width: .5; stroke-linejoin: round; cursor: pointer; vector-effect: non-scaling-stroke; }
 .municipality-shape.is-hovered { stroke: var(--primitive-navy); stroke-width: 2; }
 .municipality-shape.is-active { stroke: var(--primitive-amber); stroke-width: 2.6; }
